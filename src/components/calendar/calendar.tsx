@@ -211,6 +211,48 @@ export const Calendar: React.FC<CalendarProps> = ({
     return [topValues, bottomValues];
   };
 
+  const getCalendarValuesForHour = () => {
+    const topValues: ReactChild[] = [];
+    const bottomValues: ReactChild[] = [];
+    const ticks = 24;
+    const topDefaultHeight = headerHeight * 0.5;
+    const dates = dateSetup.dates;
+    for (let i = 0; i < dates.length; i++) {
+      const date = dates[i];
+      const bottomValue = Intl.DateTimeFormat(locale, {
+        hour: "numeric",
+      }).format(date);
+
+      bottomValues.push(
+        <text
+          key={date.getTime()}
+          y={headerHeight * 0.8}
+          x={columnWidth * (i + +rtl)}
+          className={styles.calendarBottomText}
+          fontFamily={fontFamily}
+        >
+          {bottomValue}
+        </text>
+      );
+      if (i === 0 || date.getDate() !== dates[i - 1].getDate()) {
+        const topValue = `${date.getDate()} ${getLocaleMonth(date, locale)}`;
+        topValues.push(
+          <TopPartOfCalendar
+            key={topValue + date.getFullYear()}
+            value={topValue}
+            x1Line={columnWidth * i + ticks * columnWidth}
+            y1Line={0}
+            y2Line={topDefaultHeight}
+            xText={columnWidth * i + ticks * columnWidth * 0.5}
+            yText={topDefaultHeight * 0.9}
+          />
+        );
+      }
+    }
+
+    return [topValues, bottomValues];
+  };
+
   let topValues: ReactChild[] = [];
   let bottomValues: ReactChild[] = [];
   switch (dateSetup.viewMode) {
@@ -222,6 +264,9 @@ export const Calendar: React.FC<CalendarProps> = ({
       break;
     case ViewMode.Day:
       [topValues, bottomValues] = getCalendarValuesForDay();
+      break;
+    case ViewMode.Hour:
+      [topValues, bottomValues] = getCalendarValuesForHour();
       break;
     default:
       [topValues, bottomValues] = getCalendarValuesForOther();

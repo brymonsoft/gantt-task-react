@@ -111,6 +111,10 @@ export const ganttDateRange = (tasks: Task[], viewMode: ViewMode) => {
       newStartDate = addToDate(newStartDate, -1, "day");
       newEndDate = addToDate(newEndDate, 108, "hour"); // 24(1 day)*5 - 12
       break;
+    case ViewMode.Hour:
+      newStartDate = startOfDate(newStartDate, "day");
+      newEndDate = startOfDate(newEndDate, "day");
+      break;
   }
   return [newStartDate, newEndDate];
 };
@@ -139,9 +143,13 @@ export const seedDates = (
       case ViewMode.QuarterDay:
         currentDate = addToDate(currentDate, 6, "hour");
         break;
+      case ViewMode.Hour:
+        currentDate = addToDate(currentDate, 1, "hour");
+        break;
     }
     dates.push(currentDate);
   }
+  console.log(dates);
   return dates;
 };
 
